@@ -1,0 +1,3 @@
+MONGO_URI=mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000
+SENDGRID_API_KEY=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
+BOXMAP_API_KEY=pk.eyJ1IjoibXI3amFja3kiLCJhIjoiY2t1eDhxYmRxMjNicTJvcTliYzZvdG9sYyJ9.PiTEElOGozLlE6JG2Pl0Gg
