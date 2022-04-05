@@ -1,0 +1,68 @@
+import {React,useState,useEffect} from "react";
+
+// reactstrap components
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  FormGroup,
+  Form,
+  Input,
+  Container,
+  Row,
+  Col,
+} from "reactstrap";
+// layout for this page
+import Admin from "layouts/Admin.js";
+// core components
+import EventDetails from "../../components/Events/EventDetails";
+import EventDetailsHeader from "../../components/Events/EventDetailsHeader";
+
+async function fetchEvent(id) {
+  // Sample code to get
+  const response = await fetch('/api/event', {
+    method: 'GET',
+    headers: {
+      'Accept' : 'application/json, text/plain, */*',
+      'Content-Type' : 'application/json;charset=UTF-8',
+      ids: JSON.stringify([id])
+    },
+  });
+  var all_events = null
+  await response.json().then(data => {
+    all_events = data.events;
+  });
+  
+  return all_events;
+}
+
+function SampleEventDetails(props) {
+  var id = 0;
+  // if (props.match.params) {
+  //   id = props.match.params.id;
+  // }
+  
+
+  const [details, setDetails] = useState([]);
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+  const fetchProducts = async () => {
+    fetchEvent(id)
+    .then(event => setDetails(EventDetails(event[0])))
+      };
+  
+  return (
+    <>
+      {/* Page content */}
+      <EventDetailsHeader/>
+        <Container className="mt--7" fluid>
+        {details}
+      </Container>
+    </>);
+}
+
+SampleEventDetails.layout = Admin;
+
+export default SampleEventDetails;

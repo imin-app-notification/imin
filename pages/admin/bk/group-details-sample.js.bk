@@ -1,0 +1,66 @@
+import {React,useState,useEffect }from "react";
+
+// reactstrap components
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  FormGroup,
+  Form,
+  Input,
+  Container,
+  Row,
+  Col,
+} from "reactstrap";
+// layout for this page
+import Admin from "layouts/Admin.js";
+// core components
+import GroupDetails from "../../components/Groups/GroupDetails";
+import GroupDetailsHeader from "../../components/Headers/GroupDetailsHeader";
+
+
+async function fetchGroup(id) {
+  // Sample code to get
+  const response = await fetch('/api/group', {
+    method: 'GET',
+    headers: {
+      'Accept' : 'application/json, text/plain, */*',
+      'Content-Type' : 'application/json;charset=UTF-8',
+      ids: JSON.stringify([id])
+    },
+  });
+  var all_groups = null
+  await response.json().then(data => {
+    all_groups = data.groups;
+    console.log(data)
+  });
+  return all_groups;
+}
+
+
+function SampleGroupDetails() {
+  const id = 0;
+
+  const [details, setDetails] = useState([]);
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+  const fetchProducts = async () => {
+    fetchGroup(id)
+    .then(group => setDetails(GroupDetails(group[0])))
+      };
+  
+  return (
+    <>
+      {/* Page content */}
+      <GroupDetailsHeader/>
+        <Container className="mt--7" fluid>
+        {details}
+      </Container>
+    </>);
+}
+
+SampleGroupDetails.layout = Admin;
+
+export default SampleGroupDetails;

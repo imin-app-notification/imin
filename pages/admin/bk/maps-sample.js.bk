@@ -1,0 +1,101 @@
+import React, { useRef, useEffect, useState } from "react";
+
+// reactstrap components
+import { Card, Container, Row } from "reactstrap";
+// layout for this page
+import Admin from "layouts/Admin.js";
+// core components
+import Header from "components/Headers/Header.js";
+import mapboxgl from '!mapbox-gl';
+import '../../assets/css/map.css';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pbmFwcG5vdGlmaWNhdGlvbiIsImEiOiJjbDBmdHUwbTYwd2VuM2pvOXdkbHBlZTJmIn0.v2-S7mHBAgezjJ54hvlKaA';
+
+
+function Maps() {
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng, setLng] = useState(-70.9);
+  const [lat, setLat] = useState(42.35);
+  const [zoom, setZoom] = useState(9);
+
+
+  useEffect(() => {
+    if (map.current) return; // initialize map only once
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom: zoom
+    });
+    // var marker = new mapboxgl.Marker()
+    //   .setLngLat([-71, 42.35])
+    //   .setPopup(
+    //     new mapboxgl.Popup({ offset: 30 }).setHTML(
+    //       "<h4>" + location.city + "</h4>" + location.location
+    //     )
+    //   ).addTo(map.current);
+    const geocoder = new MapboxGeocoder({
+      // Initialize the geocoder
+      accessToken: mapboxgl.accessToken, // Set the access token
+      mapboxgl: mapboxgl, // Set the mapbox-gl instance
+      marker:  {
+        color: "#b40219"
+      }, // Do not use the default marker style
+      placeholder: 'Search for places you are looking for...'
+    });
+
+    // Add the geocoder to the map
+    map.current.addControl(geocoder);
+  });
+
+  useEffect(() => {
+    if (!map.current) return; // wait for map to initialize
+    map.current.on('move', () => {
+      setLng(map.current.getCenter().lng.toFixed(4));
+      setLat(map.current.getCenter().lat.toFixed(4));
+      setZoom(map.current.getZoom().toFixed(2));
+    });
+  });
+
+  return (
+    <>
+      <head>
+        <meta charset="utf-8" />
+        <title>Demo: Local search with the Geocoding API</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+        <link
+          href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+          rel="stylesheet"
+        />
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+        <link
+          rel="stylesheet"
+          href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
+          type="text/css"
+        />
+      </head>
+      <Header />
+      {/* Page content */}
+      <Container className="mt--7" fluid>
+        <Row>
+          <div className="col" >
+            <Card className="shadow border-0">
+              <div className="map-sidebar">
+                Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+              </div>
+              <div ref={mapContainer} className="map-container" />
+            </Card>
+          </div>
+        </Row>
+      </Container>
+    </>
+  );
+}
+
+Maps.layout = Admin;
+
+export default Maps;
