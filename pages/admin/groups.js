@@ -3,22 +3,8 @@ import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 // reactstrap components
 import {
-    Card,
-    CardFooter,
-    CardBody,
-    CardGroup,
-    CardImg,
-    CardSubtitle,
-    CardText,
-    Button,
     Container,
-    CardTitle,
     Row,
-    Col,
-    UncontrolledTooltip,
-    ListGroupItem,
-    ListGroup,
-    Label,
 } from "reactstrap";
 // layout for this page
 import Admin from "layouts/Admin.js";
@@ -36,8 +22,6 @@ const Groups = (props) => {
         const route = useRouter();
         route.push("auth/login")
       }
-    const [copiedText, setCopiedText] = useState();
-
     //Return a container with a table displaying the groups
     return (
         <>

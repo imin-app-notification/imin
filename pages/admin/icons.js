@@ -16,7 +16,6 @@ import Admin from "layouts/Admin.js";
 // core components
 import Header from "components/Headers/Header.js";
 import YourInvites from "../../components/YourInvites/YourInvites";
-import Notification from "../../components/Notification/Notification";
 const Icons = () => {
   const [copiedText, setCopiedText] = useState();
   return (
@@ -24,9 +23,6 @@ const Icons = () => {
       <Header />
       <Container>
         <YourInvites/>
-      </Container>
-      <Container>
-        <Notification/>
       </Container>
       {" "}
       {/* Page content */}

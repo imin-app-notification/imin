@@ -28,8 +28,6 @@ import Admin from "layouts/Admin.js";
 import {
   chartOptions,
   parseOptions,
-  chartExample1,
-  chartExample2,
 } from "variables/charts.js";
 import EventCalendar from "../../components/Calendar/EventCalendar";
 import NextEvent from "../../components/NextEvent/NextEvent";
@@ -39,6 +37,12 @@ import UpcomingEvent from "../../components/Events/UpcomingEvent";
 import { parseCookies } from "../../lib/cookies";
 import { useRouter } from "next/router";
 
+/**
+ * Dashboard interface
+ * 
+ * @param {*} props User identification, used to tell which user is signed in
+ * @returns 
+ */
 const Dashboard = (props) => {
   //console.log(props.user);
   //Check if the user is logged in, if not push them to login page

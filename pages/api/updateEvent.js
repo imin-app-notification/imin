@@ -10,11 +10,12 @@ async function handler(req, res) {
   if (req.method == 'POST') {
     const id = JSON.parse(req.body.id);
     const newGuest = req.body.guestList;
+    console.log(newGuest)
     // connect to db
     const client = await connectToDatabase();
     const db = client.db();
     // use event collection
-    let coll = db.collection('groups');
+    let coll = db.collection('events');
     // Find group
     var result = await coll.findOne({ _id: id });
     if (result != null) {

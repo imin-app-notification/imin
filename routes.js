@@ -37,7 +37,7 @@ var routes = [
   },
    {
     path: "/auth/login",
-    name: "Login",
+    name: "Logout",
     icon: "ni ni-key-25 text-info",
     layout: "/admin",
   },

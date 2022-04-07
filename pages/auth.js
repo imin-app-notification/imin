@@ -22,7 +22,8 @@ function AuthPage() {
     return <p>Loading...</p>;
   }
 
-  return <></>; // <AuthForm />;
+  // return <AuthForm />;
+  
 }
 
 export default AuthPage;

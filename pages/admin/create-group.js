@@ -29,17 +29,18 @@ import CreateGroupHeader from "components/Headers/CreateGroupHeader.js";
  * @returns 
  */
 async function createGroup(curUser, groupNameRef, groupDetailsRef) {
-  
+
   const _id = 0;
+  const guestList = [];
   //Make api call to create a new group and assign it to curUser
   const response = await fetch('/api/group', {
     method: 'POST',
     body: JSON.stringify({
       user: curUser,
       group: {
-       _id, groupNameRef, groupDetailsRef 
+        _id, groupNameRef, groupDetailsRef, guestList
       }
-      }),
+    }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -74,14 +75,15 @@ function CreateGroup(props) {
   // }
 
   /**
-   * Called when the user clicks the button to create a group. Calls the createGroup function then pushes the user to the 
+   * Called when the user clicks the button to create a group. 
+   * Calls the createGroup function then pushes the user to the 
    * groups page
    * @param {*} event The event created when the form is submitted
    */
   async function submitHandler(event) {
     //console.log("Click");
     event.preventDefault();
-    await createGroup(props.user,groupNameRef.value,
+    await createGroup(props.user, groupNameRef.value,
       groupDetailsRef.value);
     route.push("groups");
   }
@@ -110,8 +112,7 @@ function CreateGroup(props) {
                   <h6 className="heading-small text-muted mb-4">
                     Group information
                   </h6>
-                  <div className="pl-lg-4">
-                    {/* <Row>
+                  {/* <Row>
                       <Col lg="12">
                         <FormGroup>
                           <label
@@ -128,59 +129,54 @@ function CreateGroup(props) {
                         </FormGroup>
                       </Col>
                     </Row> */}
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <Label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Group Name
-                          </Label>
-                          <Input
-                            className="form-control-alternative"
-                            required
-                            id="input-username"
-                            placeholder="Event Name"
-                            type="text"
-                            innerRef={(node) => groupNameRef = node}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="12">
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <Label
+                          className="form-control-label"
+                          htmlFor="input-username"
+                        >
+                          Group Name
+                        </Label>
+                        <Input
+                          className="form-control-alternative"
+                          required
+                          id="input-username"
+                          placeholder="Event Name"
+                          type="text"
+                          innerRef={(node) => groupNameRef = node}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="12">
 
-                      </Col>
-                    </Row>
-                  </div>
+                    </Col>
+                  </Row>
                   <hr className="my-4" />
                   {/* Description */}
-                  <div className="pl-lg-4">
-                    <FormGroup>
-                      <Label
-                        className="form-control-label"
-                        htmlFor="input-username"
-                      >
-                        Group Details
-                      </Label>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="A few words about group ..."
-                        rows="5"
-                        type="textarea"
-                        innerRef={(node) => groupDetailsRef = node}
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="pl-lg-4">
-                    <FormGroup>
-                      {/* <Button color="primary" href="#pablo" type="submit" size="sm"> */}
-                      <Button className="mt-4" color="primary" type="submit">
-                        Submit
-                      </Button>
-                    </FormGroup>
-                  </div>
+                  <FormGroup>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="input-username"
+                    >
+                      Group Details
+                    </Label>
+                    <Input
+                      className="form-control-alternative"
+                      placeholder="A few words about group ..."
+                      rows="5"
+                      type="textarea"
+                      innerRef={(node) => groupDetailsRef = node}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    {/* <Button color="primary" href="#pablo" type="submit" size="sm"> */}
+                    <Button className="mt-4" color="primary" type="submit">
+                      Submit
+                    </Button>
+                  </FormGroup>
                 </Form>
               </CardBody>
             </Card>

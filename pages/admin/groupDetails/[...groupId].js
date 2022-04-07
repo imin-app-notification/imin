@@ -1,4 +1,4 @@
-import {React,useState,useEffect }from "react";
+import { React, useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import Image from 'next/image'
 import profilePic from '../../../assets/img/sample.jpg'
@@ -34,8 +34,8 @@ async function fetchGroup(id) {
   const response = await fetch('/api/group', {
     method: 'GET',
     headers: {
-      'Accept' : 'application/json, text/plain, */*',
-      'Content-Type' : 'application/json;charset=UTF-8',
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json;charset=UTF-8',
       ids: JSON.stringify([id])
     },
   });
@@ -52,10 +52,10 @@ async function fetchGroup(id) {
  * @param {*} id ID of the group to find
  * @param {*} guestList A list of guest emails to add to the group
  */
-async function updateGroup(id,guestList) {
+async function updateGroup(id, guestList) {
   const response = await fetch('/api/updateGroup', {
     method: 'POST',
-    body: JSON.stringify({id: id,guestList: guestList}),
+    body: JSON.stringify({ id: id, guestList: guestList }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -111,26 +111,30 @@ function SampleGroupDetails() {
   //Find the details for the group being displayed
   const fetchProducts = async () => {
     fetchGroup(id)
-    .then(group => setDetails(GroupDetails(group[0])))
-      };
-  
+      .then(group => setDetails(group[0]))
+  };
+
   /**
    * Function for handling what happens after user submits the form to add guests to the group
-   * @param {} event Event created when user submits the form to add guests
+   * @param {obj} event Event created when user submits the form to add guests
    */
   async function submitHandler(event) {
     event.preventDefault();
-    await updateGroup(id,guestList);
+    await updateGroup(id, guests);
     //await sendEmail([guests]);
     setGuests('');
+    router.push({
+      pathname: '/admin/groupDetails/[id]',
+      query: { id: id },
+    })
   }
-  
+
   return (
     <>
       {/* Page content */}
-      <GroupDetailsHeader/>
-        <Container className="mt--7" fluid>
-        {details}
+      <GroupDetailsHeader />
+      <Container className="mt--7" fluid>
+        {GroupDetails(details)}
         <p> </p>
         <Card>
           <CardHeader>
@@ -139,82 +143,49 @@ function SampleGroupDetails() {
           <CardBody>
             <Form onSubmit={submitHandler}>
               <FormGroup>
-                  <div>
-                    
-                    <Input
+                <div>
+
+                  <Input
                     className="form-control-alternative"
                     id="input-username"
-                    placeholder="  Email address"
+                    placeholder="Email address"
                     type="text"
                     value={guests}
                     onChange={e => setGuests(e.target.value)}
-                    innerRef={(node) => guest=node}
+                    innerRef={(node) => guest = node}
                   />
-                  </div>
-                  <Button className="mt-4" color="primary" type="submit" onClick={(e) => {
-                    e.preventDefault();
-                    setGuestList([...guestList,guest.value]);
-                    setGuests('');
-                  } }>
-                    Add Guest
-                  </Button>
-                  <Button className="mt-4" color="primary" type="submit">Update Guest List</Button>
+                </div>
+
+                <Button className="mt-4" color="primary" type="submit">Update Guest List</Button>
               </FormGroup>
             </Form>
             <div>
-            {guestList}
+              {guestList}
             </div>
           </CardBody>
         </Card>
         <p> </p>
 
-      <Card>
-        <CardHeader>
-          <h2>Members</h2>
-        </CardHeader>
-        <CardBody>
-          <ListGroup>
-            <ListGroupItem active>
-              <ListGroupItemHeading>
-                <Image
-                  src={profilePic}
-                  width={50}
-                  height={50}
-                />
-              </ListGroupItemHeading>
-              <ListGroupItemText>
-                Member One
-              </ListGroupItemText>
-            </ListGroupItem>
-            <ListGroupItem>
-              <ListGroupItemHeading>
-              <Image
-                  src={profilePic}
-                  width={50}
-                  height={50}
-                />
-              </ListGroupItemHeading>
-              <ListGroupItemText>
-              Member Two
-              </ListGroupItemText>
-            </ListGroupItem>
-            <ListGroupItem>
-              <ListGroupItemHeading>
-              <Image
-                  src={profilePic}
-                  width={50}
-                  height={50}
-                />
-              </ListGroupItemHeading>
-              <ListGroupItemText>
-              Member Three
-              </ListGroupItemText>
-            </ListGroupItem>
-          </ListGroup>
-        </CardBody>
+        <Card>
+          <CardHeader>
+            <h2>Members</h2>
+          </CardHeader>
+          <CardBody>
+            <ListGroup>
+              {details.guestList?.map((name, idx) =>
+                <ListGroupItem key={idx}>
+                  <ListGroupItemHeading>
+                  </ListGroupItemHeading>
+                  <ListGroupItemText>
+                    {name}
+                  </ListGroupItemText>
+                </ListGroupItem>
+              )}
+            </ListGroup>
+          </CardBody>
 
-      </Card>
-        </Container>
+        </Card>
+      </Container>
     </>);
 }
 

@@ -19,7 +19,10 @@ import {
 } from "reactstrap";
 
 function AdminNavbar({first_name, last_name, brandText }) {
-  var name = first_name+' '+last_name;
+  var name = first_name + ' ' + last_name;
+  if (first_name == null) {
+    name = ' ';
+  }
   return (
     <>
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -36,7 +39,7 @@ function AdminNavbar({first_name, last_name, brandText }) {
                   <span className="avatar avatar-sm rounded-circle">
                     <img
                       alt="..."
-                      src={require("assets/img/theme/team-4-800x800.jpg")}
+                      src={require("assets/img/user.png")}
                     />
                   </span>
                   <Media className="ml-2 d-none d-lg-block">

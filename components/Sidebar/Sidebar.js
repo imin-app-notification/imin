@@ -35,10 +35,11 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import { useCookies } from "react-cookie"
 var ps;
 
 function Sidebar(props) {
+  const [cookie, setCookie, removeCookies] = useCookies(["user"])
   // used for checking current route
   const router = useRouter();
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -57,20 +58,40 @@ function Sidebar(props) {
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
-      return (
-        <NavItem key={key} active={activeRoute(prop.layout + prop.path)}>
-          <Link href={prop.layout + prop.path}>
-            <NavLink
-              href="#pablo"
-              active={activeRoute(prop.layout + prop.path)}
-              onClick={closeCollapse}
-            >
-              <i className={prop.icon} />
-              {prop.name}
-            </NavLink>
-          </Link>
-        </NavItem>
-      );
+      if (prop.name == 'Logout') {
+        return (
+          <NavItem key={key} active={activeRoute(prop.layout + prop.path)}>
+            <Link href={prop.layout + prop.path}>
+              <NavLink
+                href="#pablo"
+                active={activeRoute(prop.layout + prop.path)}
+                onClick={(e) => {
+                  closeCollapse;
+                  removeCookies("user");
+                }}
+              >
+                <i className={prop.icon} />
+                {prop.name}
+              </NavLink>
+            </Link>
+          </NavItem>
+        );
+      } else {
+        return (
+          <NavItem key={key} active={activeRoute(prop.layout + prop.path)}>
+            <Link href={prop.layout + prop.path}>
+              <NavLink
+                href="#pablo"
+                active={activeRoute(prop.layout + prop.path)}
+                onClick={closeCollapse}
+              >
+                <i className={prop.icon} />
+                {prop.name}
+              </NavLink>
+            </Link>
+          </NavItem>
+        );
+      }
     });
   };
   const { routes, logo } = props;

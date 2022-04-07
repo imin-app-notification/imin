@@ -3,21 +3,16 @@ import Moment from 'moment';
 import { useRouter } from 'next/router';
 import {
   Card,
-  CardFooter,
   CardBody,
   CardGroup,
   CardImg,
-  CardSubtitle,
   CardText,
   Button,
   Container,
   CardTitle,
   Row,
   Col,
-  UncontrolledTooltip,
-  ListGroupItem,
-  ListGroup,
-  Label,
+  CardHeader,
 } from "reactstrap";
 
 /**
@@ -76,11 +71,10 @@ function GroupTable(props) {
                     top
                     width="100%"
                   />
+                  <CardHeader>
+                    <h2 className="mb-0">{group.groupNameRef}</h2>
+                  </CardHeader>
                   <CardBody>
-                    <CardTitle>
-                      <h2 className="mb-0">{group.groupNameRef}</h2>
-                    </CardTitle>
-                    <CardBody>
                       <CardText >
                         {group.groupDetailsRef}
                       </CardText>
@@ -96,8 +90,7 @@ function GroupTable(props) {
                       >
                         View Details
                       </Button>
-                    </CardBody>
-
+{/* 
                     <CardFooter className="text-muted">
                       <Label><h3 className="mb-0">Upcoming Event</h3></Label>
 
@@ -110,7 +103,7 @@ function GroupTable(props) {
                           Activity 1
                         </ListGroupItem>
                       </ListGroup>
-                    </CardFooter>
+                    </CardFooter> */}
                   </CardBody>
                 </Card>
               </Col>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router'
 
 // reactstrap components
@@ -14,6 +14,7 @@ import {
   Row,
   InputGroup,
   Col,
+  Table,
 } from "reactstrap";
 // layout for this page
 import Admin from "layouts/Admin.js";
@@ -24,10 +25,26 @@ import mapboxgl from '!mapbox-gl';
 import '../../assets/css/map.css';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import Router from 'next/dist/next-server/lib/router/router';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaW1pbmFwcG5vdGlmaWNhdGlvbiIsImEiOiJjbDBmdHUwbTYwd2VuM2pvOXdkbHBlZTJmIn0.v2-S7mHBAgezjJ54hvlKaA';
-
+/**
+ * Add an event to db
+ * 
+ * @param {string} curUser Name of the use currently signed in
+ * @param {string} eventNameRef Name of the event being created
+ * @param {string} startTimeRef Start time of event
+ * @param {string} endTimeRef End time of event
+ * @param {string} groupRef Group of event
+ * @param {string} maxAttendeeRef Max number of attendees
+ * @param {string} recurEventRef Is event recurring
+ * @param {string} waitlistRef Is waitlist enabled
+ * @param {string} eventDetailsRef Details for the event
+ * @param {string} lat Lattitude of event
+ * @param {string} lng Longitude of event
+ * @param {string} guestList List of attendees
+ * 
+ * @returns 
+ */
 async function createEvent(curUser, eventNameRef,
   startTimeRef,
   endTimeRef,
@@ -44,7 +61,7 @@ async function createEvent(curUser, eventNameRef,
       user: curUser,
       event: {
         _id, eventNameRef, startTimeRef, endTimeRef, groupRef, maxAttendeeRef,
-        recurEventRef, waitlistRef, eventDetailsRef, location: [lat, lng]
+        recurEventRef, waitlistRef, eventDetailsRef, location: [lat, lng], guestList
       },
       guests: guestList
     }),
@@ -62,13 +79,25 @@ async function createEvent(curUser, eventNameRef,
   return data;
 }
 
-async function sendEmail(emailList,eventNameRef,startTimeRef,groupRef,eventDetailsRef) {
+/**
+ * Sends email to everyone on the email list notifying them they've been added to a group
+ * @param {string} emailList List of recipient emails
+ * @param {string} eventNameRef Name of the event being created
+ * @param {string} startTimeRef Start time of event
+ * @param {string} maxAttendeeRef Max number of attendees
+ * @param {string} eventDetailsRef Details for the event
+ * 
+ * @returns 
+ */
+async function sendEmail(emailList, eventNameRef, startTimeRef, groupRef, eventDetailsRef) {
   var subject = "You are invited to event"
   console.log(emailList)
   const response = await fetch('/api/sendEmail', {
     method: 'POST',
-    body: JSON.stringify({ emails: emailList, subject: subject, eventName: eventNameRef,
-     startTime: startTimeRef, group: groupRef, eventDetails: eventDetailsRef}),
+    body: JSON.stringify({
+      emails: emailList, subject: subject, eventName: eventNameRef,
+      startTime: startTimeRef, group: groupRef, eventDetails: eventDetailsRef
+    }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -80,6 +109,13 @@ async function sendEmail(emailList,eventNameRef,startTimeRef,groupRef,eventDetai
   return data;
 }
 
+/**
+ * Fetch the groups of an user
+ * 
+ * @param {string} user Name of the use currently signed in
+ * 
+ * @returns 
+ */
 async function fetchGroups(user) {
   // Sample code to get
   const response = await fetch('/api/allGroups', {
@@ -97,15 +133,18 @@ async function fetchGroups(user) {
   return all_groups;
 }
 
-
-
-
+/**
+ * Create event interface
+ * 
+ * @param {*} props User identification, used to tell which user is signed in
+ * @returns 
+ */
 function CreateEvent(props) {
   const route = useRouter();
   if (!props.user) {
     route.push("auth/login")
   }
-  
+
   // Map func
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -152,15 +191,22 @@ function CreateEvent(props) {
   let startTimeRef = null;
   let endTimeRef = null;
   let groupRef = null;
-  let maxAttendeeRef = null;
-  let recurEventRef = null;
-  let waitlistRef = null;
+  let maxAttendeeRef = 1;
+  let recurEventRef = 1;
+  let waitlistRef = 1;
   let eventDetailsRef = null;
   let guest = null;
 
+
+  /**
+   * Called when the user clicks the button to create a event. 
+   * Calls the createEvent function
+   * 
+   * @param {*} event The event created when the form is submitted
+   */
   async function submitHandler(event) {
     event.preventDefault();
-    await sendEmail(guestList,eventNameRef.value,startTimeRef.value,groupRef.value,eventDetailsRef.value);
+    await sendEmail(guestList, eventNameRef.value, startTimeRef.value, groupRef.value, eventDetailsRef.value);
     // Modify to create a list of information from the form
     await createEvent(props.user,
       eventNameRef.value,
@@ -172,8 +218,8 @@ function CreateEvent(props) {
       waitlistRef.value,
       eventDetailsRef.value,
       lat, lng, guestList);
-      route.push("dashboard");
-    
+    route.push("dashboard");
+
 
   }
 
@@ -222,105 +268,81 @@ function CreateEvent(props) {
               </CardHeader>
               <CardBody>
                 <Form onSubmit={submitHandler}>
-                  <h6 className="heading-small text-muted mb-4">
-                    Event information
-                  </h6>
-                  <div className="pl-lg-4">
-                    {/* <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Avatar
-                          </label>
-                          <Input
-                            className="form-control-file-input"
-                            id="input-username"
-                            name="file"
-                            type="file"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row> */}
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Event Name
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-username"
-                            placeholder="Event Name"
-                            type="text"
-                            required
-                            innerRef={(node) => eventNameRef = node}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-username"
+                        >
+                          Event Name
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-username"
+                          placeholder="Event Name"
+                          type="text"
+                          required
+                          innerRef={(node) => eventNameRef = node}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
 
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Start Time
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            required
-                            id="input-first-name"
-                            type="datetime-local"
-                            innerRef={(node) => startTimeRef = node}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            End Time
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            required
-                            id="input-first-name"
-                            type="datetime-local"
-                            innerRef={(node) => endTimeRef = node}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="12">
-                        <Card className="shadow border-0">
-                          {/* <div className="map-sidebar">
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-first-name"
+                        >
+                          Start Time
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          required
+                          id="input-first-name"
+                          type="datetime-local"
+                          innerRef={(node) => startTimeRef = node}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-first-name"
+                        >
+                          End Time
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          required
+                          id="input-first-name"
+                          type="datetime-local"
+                          innerRef={(node) => endTimeRef = node}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg="12">
+                      <Card className="shadow border-0">
+                        {/* <div className="map-sidebar">
                     Latitude: {lat} | Longitude: {lng} | 
                     </div> */}
-                          <div ref={mapContainer} className="map-container" />
-                        </Card>
-                      </Col>
+                        <div ref={mapContainer} className="map-container" />
+                      </Card>
+                    </Col>
 
-                    </Row>
-                  </div>
+                  </Row>
                   <hr className="my-4" />
                   {/* Address */}
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
                         <label
                           className="form-control-label"
                           htmlFor="input-username"
@@ -332,7 +354,11 @@ function CreateEvent(props) {
 
                           <Button onClick={(e) => {
                             e.preventDefault();
-                            setGuestList([...guestList,guest.value]);
+                            let newList = guestList;
+                            if (!guestList.includes(guest.value)) {
+                              newList = [...guestList, guest.value];
+                            }
+                            setGuestList(newList);
                             setGuests('');
                           }}>
                             Add Guest
@@ -345,41 +371,56 @@ function CreateEvent(props) {
                             type="text"
                             value={guests}
                             onChange={e => setGuests(e.target.value)}
-                            innerRef={(node) => guest=node}
+                            innerRef={(node) => guest = node}
                           />
-                          
+
+                          <Table>
+                            <thead className="thead-light">
+                              <tr>
+                                <th>Email</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {guestList && guestList.map((name, idx) =>
+                                <tr>
+                                  <th key={idx}>
+                                    <h5>{name}</h5>
+                                  </th>
+                                </tr>
+                              )}
+                            </tbody>
+                          </Table>
                         </InputGroup>
-                        </FormGroup>
-                        <Row><div>
-                            {guestList}
-                          </div></Row>
-                      </Col>
-                    </Row>
-                    
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Group
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-username"
-                            placeholder="Event Name"
-                            type="select"
-                            innerRef={(node) => groupRef = node}
-                            defaultValue={-1}
-                          >
-                            <option value={-1}>Select a group</option>
-                            {details.map((groups,idx) => <option key={idx} value={groups._id}>{groups.groupNameRef}</option>)}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
+
+                      </FormGroup>
+
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col lg="12">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="input-username"
+                        >
+                          Group
+                        </label>
+                        <Input
+                          className="form-control-alternative"
+                          id="input-username"
+                          placeholder="Event Name"
+                          type="select"
+                          innerRef={(node) => groupRef = node}
+                          defaultValue={-1}
+                        >
+                          <option value={-1}>Select a group</option>
+                          {details.map((groups, idx) => <option key={idx} value={groups._id}>{groups.groupNameRef}</option>)}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  {/* <Row>
                       <Col lg="12">
                         <FormGroup>
                           <label
@@ -408,11 +449,11 @@ function CreateEvent(props) {
                           >
                             Recurring Event
                           </label>
-                          {/* <Input
+                          <Input
                             className="form-control-alternative"
                             id="input-first-name"
                             type="checkbos"
-                          /> */}
+                          /> 
                         </FormGroup>
                       </Col>
                       <Col lg="6">
@@ -423,11 +464,11 @@ function CreateEvent(props) {
                             type="checkbox"
                             innerRef={(node) => recurEventRef = node}
                           />
-                          {/* <span
+                          <span
                             className=" custom-toggle-slider rounded-circle"
                             data-label-off="No"
                             data-label-on="Yes"
-                          ></span> */}
+                          ></span> 
                         </FormGroup>
                       </Col>
                     </Row>
@@ -440,11 +481,11 @@ function CreateEvent(props) {
                           >
                             Waitlist
                           </label>
-                          {/* <Input
+                          <Input
                             className="form-control-alternative"
                             id="input-first-name"
                             type="checkbos"
-                          /> */}
+                          />
                         </FormGroup>
                       </Col>
                       <Col lg="6">
@@ -455,39 +496,39 @@ function CreateEvent(props) {
                             type="checkbox"
                             innerRef={(node) => waitlistRef = node}
                           />
-                          {/* <span
+                          <span
                             className=" custom-toggle-slider rounded-circle"
                             data-label-off="No"
                             data-label-on="Yes"
-                          ></span> */}
+                          ></span>
                         </FormGroup>
                       </Col>
-                    </Row>
-                  </div>
+                    </Row> */}
                   <hr className="my-4" />
                   {/* Description */}
-                  <div className="pl-lg-4">
-                    <FormGroup>
-                      <label>Event Details</label>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="A few words about this event..."
-                        rows="5"
-                        type="textarea"
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                        }}
-                        innerRef={(node) => eventDetailsRef = node}
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="pl-lg-4">
-                    <FormGroup>
-                      <Button className="mt-4" color="primary" type="submit">
-                        Create Event
-                      </Button>
-                    </FormGroup>
-                  </div>
+                  <FormGroup>
+                    <label
+                      className="form-control-label"
+                      htmlFor="input-username"
+                    >
+                      Event Details
+                    </label>
+                    <Input
+                      className="form-control-alternative"
+                      placeholder="A few words about this event..."
+                      rows="5"
+                      type="textarea"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                      }}
+                      innerRef={(node) => eventDetailsRef = node}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Button className="mt-4" color="primary" type="submit">
+                      Create Event
+                    </Button>
+                  </FormGroup>
                 </Form>
               </CardBody>
             </Card>

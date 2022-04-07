@@ -1,5 +1,5 @@
 # Im In App
-![pic](./assets/img/im-in.jpg)
+![pic](./assets/img/im-in.png)
 
 ## Table of Contents
 
@@ -25,7 +25,43 @@ npm install next react react-dom
 
 ### Installation of Mongo DB
 
-- wins
+**MongoDB Windows Installation**
+
+A full Windows installation guide can be found [here](https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database#setting-up-mongodb-on-windows)
+
+Visit [MongoDB](https://www.mongodb.com/try/download/community) and find the Windows installer. Verify you have the correct version selected as per the Prerequisites section.
+
+Once the installer has downloaded, double click to start the installation. Follow the prompts to progress through the installation. When asked to choose a setup type, select the “Complete” version. Keep the default service configuration. You will be prompted to download MongoDB Compass, this is recommended if you wish to see the contents of the database. Finally, click the install button on the last prompt to execute the installation.
+
+Launch a terminal session and execute the command:
+
+```bash
+md \data\db
+```
+
+This will setup a directory where MongoDB can store the database locally
+
+To run MongoDB, you will type the absolute path to the executable. Make sure you have the version number matches what you installed:
+
+```bash
+“C:\Program Files\MongoDB\Server\5.0\bin\mongod.exe”
+```
+
+To connect to the server, open another terminal session and enter the absolute path to the mongo.exe executable:
+
+```bash
+“C:\Program Files\MongoDB\Server\5.0\bin\mongo.exe”
+```
+
+You can verify the connection in your second terminal by running:
+
+```bash
+show dbs
+```
+
+This will show the sections of your database and how much space they are using.
+
+To connect to the database with MongoDB Compass, first launch the application. Then, navigate to the New Connection page and hit the green `connect` button. MongoDB Compass will then attempt to connect to any databases running locally.
 
 **MongoDB Mac Installation**
 
@@ -105,6 +141,11 @@ http://localhost:3000/
 Email: imin.app.notifications@gmail.com
 Password: kw9Pb4Qr
 
+#### Github Account
+Username: imin-app-notification
+Email: imin.app.notifications@gmail.com
+Password: Imin.app.2021
+
 #### Mongodb
 Login with google
 Username: iminappnotifications
@@ -181,8 +222,6 @@ Password: jzl9wtgs
     * [AuthNavbar.js](./components/Navbars/AuthNavbar.js)
   * [NextEvent/](./components/NextEvent)
     * [NextEvent.js](./components/NextEvent/NextEvent.js)
-  * [Notification/](./components/Notification)
-    * [Notification.js](./components/Notification/Notification.js)
   * [PageChange/](./components/PageChange)
     * [PageChange.js](./components/PageChange/PageChange.js)
   * [Sidebar/](./components/Sidebar)
