@@ -91,7 +91,6 @@ async function createEvent(curUser, eventNameRef,
  */
 async function sendEmail(emailList, eventNameRef, startTimeRef, groupRef, eventDetailsRef) {
   var subject = "You are invited to event"
-  console.log(emailList)
   const response = await fetch('/api/sendEmail', {
     method: 'POST',
     body: JSON.stringify({
@@ -219,8 +218,6 @@ function CreateEvent(props) {
       eventDetailsRef.value,
       lat, lng, guestList);
     route.push("dashboard");
-
-
   }
 
   const [details, setDetails] = useState([]);
@@ -328,14 +325,9 @@ function CreateEvent(props) {
                     </Col>
                   </Row>
                   <Row>
-                    <Col lg="12">
-                      <Card className="shadow border-0">
-                        {/* <div className="map-sidebar">
-                    Latitude: {lat} | Longitude: {lng} | 
-                    </div> */}
+                    <Container lg="12">
                         <div ref={mapContainer} className="map-container" />
-                      </Card>
-                    </Col>
+                    </Container>
 
                   </Row>
                   <hr className="my-4" />
@@ -382,7 +374,7 @@ function CreateEvent(props) {
                             </thead>
                             <tbody>
                               {guestList && guestList.map((name, idx) =>
-                                <tr>
+                                <tr key={idx}>
                                   <th key={idx}>
                                     <h5>{name}</h5>
                                   </th>
@@ -518,9 +510,6 @@ function CreateEvent(props) {
                       placeholder="A few words about this event..."
                       rows="5"
                       type="textarea"
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                      }}
                       innerRef={(node) => eventDetailsRef = node}
                     />
                   </FormGroup>
@@ -541,7 +530,6 @@ function CreateEvent(props) {
 
 CreateEvent.getInitialProps = async ({ req, res }) => {
   const data = parseCookies(req)
-  console.log(data.user);
   if (res) {
     if (Object.keys(data).length === 0 && data.constructor === Object) {
       res.writeHead(301, { Location: "/" })

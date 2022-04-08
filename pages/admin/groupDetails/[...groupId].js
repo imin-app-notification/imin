@@ -77,7 +77,6 @@ async function updateGroup(id, guestList) {
  */
 async function sendEmail(emailList) {
   var subject = "You are invited to group"
-  console.log(emailList)
   const response = await fetch('/api/sendEmail', {
     method: 'POST',
     body: JSON.stringify({ emails: emailList, subject }),
@@ -192,7 +191,6 @@ function SampleGroupDetails() {
 //Populate page with data when it is fetched from the server
 SampleGroupDetails.getInitialProps = async ({ req, res }) => {
   const data = parseCookies(req)
-  console.log(data.user);
   if (res) {
     if (Object.keys(data).length === 0 && data.constructor === Object) {
       res.writeHead(301, { Location: "/" })

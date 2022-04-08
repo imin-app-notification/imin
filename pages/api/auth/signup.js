@@ -15,8 +15,6 @@ async function handler(req, res) {
   // Fetch the input info
   const data = req.body;
   let { name, email, password } = data;
-  console.log({ name, email, password });
-
   // Check validness
   if (
     !email ||

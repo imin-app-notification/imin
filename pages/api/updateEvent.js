@@ -10,7 +10,6 @@ async function handler(req, res) {
   if (req.method == 'POST') {
     const id = JSON.parse(req.body.id);
     const newGuest = req.body.guestList;
-    console.log(newGuest)
     // connect to db
     const client = await connectToDatabase();
     const db = client.db();

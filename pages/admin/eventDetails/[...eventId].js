@@ -139,11 +139,16 @@ function SampleEventDetails() {
   const fetchProducts = async () => {
     fetchEvent(id)
       .then(event => {
-        fetchGroup(event[0].groupRef, event[0])
-        .then(info => {
-          info.event.groupRef = info.group.groupNameRef;
-          setDetails(EventDetails(info.event));
-        });
+        if (event[0].groupRef == -1) {
+          event[0].groupRef = "No Group";
+          setDetails(EventDetails(event[0]));
+        } else {
+          fetchGroup(event[0].groupRef, event[0])
+          .then(info => {
+            info.event.groupRef = info.group.groupNameRef;
+            setDetails(EventDetails(info.event));
+          });
+        }
         setGuestList(event[0].guestList)
         setLat(event[0].location[0]);
         setLng(event[0].location[1]);

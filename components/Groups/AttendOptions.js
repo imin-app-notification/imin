@@ -55,7 +55,6 @@ function AttendOptions(props) {
    * @return {object} HTML formatted of the upcoming event table
    */
   function updateHandler(select) {
-    console.log(select)
     updateSelect(props.user, props.idx, select)
   }
   // Return the formatting

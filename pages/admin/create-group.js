@@ -190,7 +190,6 @@ function CreateGroup(props) {
 //Populate page with data when it is fetched from the server
 CreateGroup.getInitialProps = async ({ req, res }) => {
   const data = parseCookies(req)
-  console.log(data.user);
   if (res) {
     if (Object.keys(data).length === 0 && data.constructor === Object) {
       res.writeHead(301, { Location: "/" })

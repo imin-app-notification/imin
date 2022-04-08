@@ -28,7 +28,6 @@ export default NextAuth({
           credentials.password,
           user.password
         );
-        console.log(isValid);
         if (!isValid) {
           client.close();
           throw new Error('Could not log you in!');

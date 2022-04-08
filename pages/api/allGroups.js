@@ -24,7 +24,6 @@ async function handler(req, res) {
     for (let i = 0; i < userGroups.length; i++) {
         ids.push(userGroups[i].id);
     }
-    console.log(ids)
 
     // use group collection to find all groups
     let coll_groups = db.collection('groups');

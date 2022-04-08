@@ -19,7 +19,6 @@ async function handler(req, res) {
     // Use event collection
     let coll = db.collection('users');
     // Check if current user exist
-    console.log(email)
     const curUser = await coll.findOne({
       email: email,
     });
@@ -33,7 +32,6 @@ async function handler(req, res) {
         { email: email, "events.id": idx },
         { $set: { "events.$.is_attend": select } }
       );
-      console.log(status);
       res.status(201).json({ message: 'Update Success' });
     }
     client.close();

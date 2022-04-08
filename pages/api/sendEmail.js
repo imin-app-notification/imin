@@ -12,6 +12,7 @@ async function sendEmail(req, res) {
   // Get all the email to send
   const emailList = req.body.emails;
   let email = null;
+  
   // Iteratively to send email to users
   try {
     for (let i = 0; i < emailList.length; i++) {

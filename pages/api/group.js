@@ -61,13 +61,11 @@ async function handler(req, res) {
         groups.push(result);
       }
     }
-    console.log(groups)
     if (groups.length > 0) {
       res.status(201).json({message: 'Found', groups: groups});
     } else {
       res.status(221).json({message: 'Not Found'});
     }
-    console.log(groups)
 
   }
 }

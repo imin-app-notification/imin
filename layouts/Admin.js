@@ -83,7 +83,6 @@ function Admin(props) {
 
 Admin.getInitialProps = async ({ req, res }) => {
   const data = parseCookies(req)
-  console.log(data.user);
   if (res) {
     if (Object.keys(data).length === 0 && data.constructor === Object) {
       res.writeHead(301, { Location: "/" })

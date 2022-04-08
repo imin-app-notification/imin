@@ -10,7 +10,6 @@ async function handler(req, res) {
   if (req.method == 'POST') {
     // get user info
     const user = req.body;
-    console.log(user);
     // connect to db
     const client = await connectToDatabase();
     const db = client.db();

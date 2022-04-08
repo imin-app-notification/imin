@@ -19,7 +19,6 @@ async function handler(req, res) {
     var c = await coll.estimatedDocumentCount(); // faster to estimate
     //var c = await coll.countDocuments(); // slower but accurate
     event._id = c;
-    console.log({ event });
     // insert event
     const result = await coll.insertOne(event);
     // Save info to users
@@ -45,7 +44,6 @@ async function handler(req, res) {
       // Update the event info to user profile for attendees 
       // if attendess is registered
       curEmail = emailList[i];
-      console.log(curEmail)
       const curUser = await coll.findOne({
         email: curEmail,
       });

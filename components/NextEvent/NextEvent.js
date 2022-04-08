@@ -79,7 +79,6 @@ function NextEvent(user) {
     useEffect(() => {
         if (map.current) return; // initialize map only once
         if (lat == null || lng == null) return;
-        console.log([lat, lng])
         // Set default location of map
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
