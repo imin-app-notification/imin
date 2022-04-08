@@ -96,7 +96,7 @@ function Sidebar(props) {
   };
   const { routes, logo } = props;
   let navbarBrand = (
-    <NavbarBrand href="/admin/dashboard" className="pt-0">
+    <NavbarBrand href="/admin/dashboard" onClick={router.reload()} className="pt-0">
       <img alt={logo.imgAlt} className="navbar-brand-img" src={logo.imgSrc} />
     </NavbarBrand>
   );
