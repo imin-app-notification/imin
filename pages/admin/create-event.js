@@ -232,7 +232,7 @@ function CreateEvent(props) {
 
   return (
     <>
-      {/* <head>
+      <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
@@ -246,7 +246,7 @@ function CreateEvent(props) {
           href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
           type="text/css"
         />
-      </head> */}
+      </head>
       <CreateEventHeader />
       {/* Page content */}
       <Container className="mt--7" fluid>
@@ -359,7 +359,7 @@ function CreateEvent(props) {
                           <Input
                             className="form-control-alternative"
                             id="input-username"
-                            placeholder="  Email address"
+                            placeholder="Email address"
                             type="text"
                             value={guests}
                             onChange={e => setGuests(e.target.value)}
@@ -407,7 +407,10 @@ function CreateEvent(props) {
                           defaultValue={-1}
                         >
                           <option value={-1}>Select a group</option>
-                          {details.map((groups, idx) => <option key={idx} value={groups._id}>{groups.groupNameRef}</option>)}
+                          {details && details.map((groups, idx) => 
+                          <option key={idx} value={groups._id}>
+                            {groups.groupNameRef}
+                            </option>)}
                         </Input>
                       </FormGroup>
                     </Col>
