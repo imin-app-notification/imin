@@ -13,8 +13,27 @@ async function handler(req, res) {
     // connect to db
     const client = await connectToDatabase();
     const db = client.db();
+    // send invitation to attendees 
+    const emailList = req.body.guests;
+    let curEmail = null;
+    let coll = db.collection('groups');
+    // Find group info
+    if (event.groupRef != -1) {
+      // Check if user exists
+      const curGroup = await coll.findOne({
+        _id: parseInt(event.groupRef),
+      });
+      // Add user from group
+      for (let i = 0; i < curGroup.guestList.length; i++) {
+        curEmail = curGroup.guestList[i];
+        if (!emailList.includes(curEmail)) {
+          emailList.push(curEmail);
+        }
+      }
+    }
+    event.guestList = emailList;
     // use event collection
-    let coll = db.collection('events');
+    coll = db.collection('events');
     // estimate total number and assign id
     var c = await coll.estimatedDocumentCount(); // faster to estimate
     //var c = await coll.countDocuments(); // slower but accurate
@@ -37,9 +56,7 @@ async function handler(req, res) {
         { $push: { events: { id: event._id, is_attend: 1, is_organizer: true } } }
       );
     }
-    // send invitation to attendees
-    const emailList = req.body.guests;
-    let curEmail = null;
+    
     for (let i = 0; i < emailList.length; i++) {
       // Update the event info to user profile for attendees 
       // if attendess is registered
@@ -49,7 +66,7 @@ async function handler(req, res) {
       });
       if (curUser) {
         await coll.updateOne(
-          { email: curEmail},
+          { email: curEmail },
           { $push: { events: { id: event._id, is_attend: 2, is_organizer: false } } }
         );
       }
@@ -57,7 +74,7 @@ async function handler(req, res) {
     res.status(201).json({ message: 'Created event!' });
     client.close();
     return 1;
-    
+
   } else if (req.method == 'GET') {
     // Get event info
     // Parse event ids

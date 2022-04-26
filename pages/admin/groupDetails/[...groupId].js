@@ -1,6 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useRouter } from 'next/router';
-import Image from 'next/image'
+import { useRouter} from 'next/router';
 import profilePic from '../../../assets/img/sample.jpg'
 // reactstrap components
 import {
@@ -24,6 +23,7 @@ import { parseCookies } from "../../../lib/cookies";
 // core components
 import GroupDetails from "../../../components/Groups/GroupDetails";
 import GroupDetailsHeader from "../../../components/Headers/GroupDetailsHeader";
+
 
 /**
  * Finds a group by ID through a GET api call to the database
@@ -91,14 +91,19 @@ async function sendEmail(emailList) {
   return data;
 }
 
+var id = null;
 /**
  * Generic page for a group, details are filled in by fetching group info from the database
  */
 function SampleGroupDetails() {
   const router = useRouter()
   //Get the id of the group we are displaying
-  const { id } = router.query
-
+  if (router.query) {
+    id = router.query.groupId[0]
+  }
+  console.log(id)
+  // Count will triger the update of the details
+  const [count, setCount] = useState(0);
   const [guests, setGuests] = useState('');
   const [guestList, setGuestList] = useState([]);
   let guest = '';
@@ -106,7 +111,7 @@ function SampleGroupDetails() {
   const [details, setDetails] = useState([]);
   useEffect(() => {
     fetchProducts();
-  }, []);
+  },[count]);
   //Find the details for the group being displayed
   const fetchProducts = async () => {
     fetchGroup(id)
@@ -122,10 +127,7 @@ function SampleGroupDetails() {
     await updateGroup(id, guests);
     //await sendEmail([guests]);
     setGuests('');
-    router.push({
-      pathname: '/admin/groupDetails/[id]',
-      query: { id: id },
-    })
+    setCount((c) => c + 1);
   }
 
   return (
@@ -186,21 +188,6 @@ function SampleGroupDetails() {
         </Card>
       </Container>
     </>);
-}
-
-//Populate page with data when it is fetched from the server
-SampleGroupDetails.getInitialProps = async ({ req, res }) => {
-  const data = parseCookies(req)
-  if (res) {
-    if (Object.keys(data).length === 0 && data.constructor === Object) {
-      res.writeHead(301, { Location: "/" })
-      res.end()
-    }
-  }
-
-  return {
-    user: data.user,
-  }
 }
 
 SampleGroupDetails.layout = Admin;

@@ -1,5 +1,5 @@
-import React from "react";
-
+import { React, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 // reactstrap components
 import {
   Button,
@@ -47,6 +47,7 @@ async function updateSelect(user, idx, select) {
  * @return {object} formatted HTML
  */
 function AttendOptions(props) {
+  const router = useRouter();
   /**
    * Handle the update of selection.
    *
@@ -55,7 +56,8 @@ function AttendOptions(props) {
    * @return {object} HTML formatted of the upcoming event table
    */
   function updateHandler(select) {
-    updateSelect(props.user, props.idx, select)
+    updateSelect(props.user, props.idx, select);
+    // router.reload(window.location.pathname);
   }
   // Return the formatting
   if (props.isAttend == 2) {

@@ -15,6 +15,8 @@ import '@fullcalendar/daygrid/main.css'
 import '@fullcalendar/timegrid/main.css'
 import '../components/Calendar/calendar.css'
 
+import AdminNavbar from "components/Navbars/AdminNavbar.js"
+
 Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
   document.body.classList.add("body-page-transition");
@@ -78,8 +80,8 @@ export default class MyApp extends App {
         </Head>
         <Layout>
           
-            <Component {...pageProps} />
-          
+            {/* {typeof window !== 'undefined' ? <Component {...pageProps} /> : <div/>} */}
+          <Component {...pageProps} />
         </Layout>
       </React.Fragment>
     );

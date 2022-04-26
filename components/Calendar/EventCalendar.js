@@ -1,6 +1,8 @@
 import { EventSourceApi } from "@fullcalendar/react";
 import Calendar from "./Calendar";
 import React, { useState, useEffect } from "react";
+import dynamic from 'next/dynamic'
+let FullCalendar
 
 /**
  * Fetch event for specific user
@@ -14,14 +16,14 @@ async function fetchAllEvent(user) {
     const response = await fetch('/api/fetchAllEvent', {
         method: 'POST',
         body: JSON.stringify({
-          user: user, 
-          }),
+            user: user,
+        }),
         headers: {
-          'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
         },
     });
     // Obtain all the data from response
-    var events = null
+    var events = [];
     await response.json().then(data => {
         events = data.events;
     });
@@ -38,9 +40,10 @@ async function fetchAllEvent(user) {
  * 
  * @return {object} HTML formatted of the calendar event
  */
-function EventCalendar(user) {
+function EventCalendar(props) {
+    const user = props.user;
     // Store the event details
-    const [details, setDetails] = useState(null);
+    const [details, setDetails] = useState([]);
     // Fetch the event and store in details
     useEffect(() => {
         fetchProducts();
@@ -49,11 +52,47 @@ function EventCalendar(user) {
         fetchAllEvent(user)
             .then(all_events => setDetails(all_events))
     };
+    const toolBar = {
+        left: 'prev,next today',
+        center: null,
+        right: 'title'//'dayGridMonth,timeGridWeek,timeGridDay'
+    };
+    const [calendarLoaded, setCalendarLoaded] = useState(false)
+    useEffect(() => {
+        FullCalendar = dynamic({
+            modules: () => ({
+                calendar: import('@fullcalendar/react'),
+                dayGridPlugin: import('@fullcalendar/daygrid'),
+                timeGridPlugin: import('@fullcalendar/timegrid'),
+            }),
+            render: (props, { calendar: Calendar, ...plugins }) => (
+                <Calendar {...props}
+                    plugins={Object.values(plugins)}
+                    contentHeight='auto'
+                    initialView='dayGridMonth'
+                    editable={false}
+                    selectable={true}
+                    selectMirror={true}
+                    dayMaxEvents={true}
+                    weekends={true}
+                    headerToolbar={toolBar}
+                    ref={props.myRef} />
+            ),
+            ssr: false
+        })
+        setCalendarLoaded(true)
+    }, [details])
+    let showCalendar = (props) => {
+        if (!calendarLoaded) return <div>Loading ...</div>
+        return (
+            <FullCalendar {...props} events={details}/>
+        )
+    }
 
     return (
-        <>
-            <Calendar events={details} />
-        </>
+        <div>
+            {showCalendar(props)}
+        </div>
     )
 
 }

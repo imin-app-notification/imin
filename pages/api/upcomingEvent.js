@@ -21,19 +21,34 @@ async function handler(req, res) {
     // Collect all event current user attend 
     // As well as user's selection on whether to attend
     const userEvents = curUser.events;
-    var ids = [];
+    var id_sel_dict = {};
     var selection = [];
     for (let i = 0; i < userEvents.length; i++) {
       if (userEvents[i].is_attend != 2) {
-        ids.push(userEvents[i].id);
-        selection.push(userEvents[i].is_attend);
+        id_sel_dict[userEvents[i].id] = userEvents[i].is_attend;
       }
     }
     // Collect event based on event it and return them
     coll = db.collection('events');
-    var event = await coll.find({ '_id': { $in: ids } }).sort({ startTimeRef: 1, _id: 1 }).limit(5).toArray();
-    if (event.length > 0) {
-      res.status(201).json({ message: 'Found', events: event, isAttend: selection });
+    var event = await coll.find({ '_id': { $in: Object.keys(id_sel_dict).map(Number) } }).sort({ startTimeRef: 1, _id: 1 }).toArray();
+    // filter those upcoming events
+    var upcomingEvent = Array();
+    for (let index = 0; index < event.length; index++) {
+      const cur = new Date(event[index].startTimeRef);
+      const today = new Date();
+      if (cur >= today) {
+        upcomingEvent.push(event[index]);
+      }
+    }
+    upcomingEvent.sort((a, b) => new Date(b.startTimeRef) - new Date(a.startTimeRef))
+    upcomingEvent = upcomingEvent.slice(0,5)
+    // Collecting selections:
+    for (let index = 0; index < upcomingEvent.length; index++) {
+      const sel = id_sel_dict[upcomingEvent[index]._id];
+      selection.push(sel);
+    }
+    if (upcomingEvent.length > 0) {
+      res.status(201).json({ message: 'Found', events: upcomingEvent, isAttend: selection });
     } else {
       //TODO-Add pseudo event when no event is in the list
       res.status(221).json({ message: 'Not Found' });

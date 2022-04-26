@@ -10,7 +10,7 @@ import Moment from 'moment';
 async function handler(req, res) {
   if (req.method == 'POST') {
     // Parse the input
-    const user = JSON.parse(req.body.user.user);
+    const user = JSON.parse(req.body.user);
     // Connect to db
     const client = await connectToDatabase();
     const db = client.db();
@@ -19,6 +19,7 @@ async function handler(req, res) {
     const curUser = await coll.findOne({
       email: user,
     });
+    
     // Collect all event current user attend 
     // As well as user's selection on whether to attend
     const userEvents = curUser.events;

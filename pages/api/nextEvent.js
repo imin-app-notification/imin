@@ -30,10 +30,21 @@ async function handler(req, res) {
     // Fetch all the event according to the list
     coll = db.collection('events');
     // Sort based on starting time.
-    var event = await coll.find({'_id':{$in: ids}}).sort({startTimeRef: 1, _id: 1 }).limit(1).toArray();
+    var event = await coll.find({'_id':{$in: ids}}).sort({startTimeRef: 1, _id: 1 }).toArray();
+    // filter those upcoming events
+    var upcomingEvent = Array();
+    for (let index = 0; index < event.length; index++) {
+      const cur = new Date(event[index].startTimeRef);
+      const today = new Date();
+      if (cur >= today) {
+        upcomingEvent.push(event[index]);
+      }
+    }
+    upcomingEvent.sort((a, b) => new Date(b.startTimeRef) - new Date(a.startTimeRef))
+    upcomingEvent = upcomingEvent.slice(0,1)
     // Check if an event is found
-    if (event.length > 0) {
-      res.status(201).json({message: 'Found', events: event});
+    if (upcomingEvent.length > 0) {
+      res.status(201).json({message: 'Found', events: upcomingEvent});
     } else {
       event = {
         "_id":"-1",

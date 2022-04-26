@@ -24,14 +24,28 @@ async function handler(req, res) {
     for (var i = 0; i < user.events.length; i++) {
       if (user.events[i].is_attend == 2) {
         event_id.push(user.events[i].id);
-        selection.push(user.events[i].is_attend)
       }
     }
     // Find all event by id
     coll = db.collection('events');
-    var event = await coll.find({'_id':{$in: event_id}}).sort({startTimeRef: 1, _id: 1 }).limit(5).toArray();
-    if (event.length > 0) {
-      res.status(201).json({message: 'Found', events: event, isAttend: selection});
+    var event = await coll.find({'_id':{$in: event_id}}).sort({startTimeRef: 1, _id: 1 }).toArray();
+    // filter those upcoming events
+    var upcomingEvent = Array();
+    for (let index = 0; index < event.length; index++) {
+      const cur = new Date(event[index].startTimeRef);
+      const today = new Date();
+      if (cur >= today) {
+        upcomingEvent.push(event[index]);
+      }
+    }
+    upcomingEvent.sort((a, b) => new Date(b.startTimeRef) - new Date(a.startTimeRef))
+    upcomingEvent = upcomingEvent.slice(0,5)
+    // Collecting selections:
+    for (let index = 0; index < upcomingEvent.length; index++) {
+      selection.push(2);
+    }
+    if (upcomingEvent.length > 0) {
+      res.status(201).json({message: 'Found', events: upcomingEvent, isAttend: selection});
     } else {
       res.status(221).json({message: 'Not Found'});
     }

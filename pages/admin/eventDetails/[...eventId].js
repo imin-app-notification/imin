@@ -96,14 +96,22 @@ async function updateEvent(id, guestList) {
 
 /**
  * Sends email to everyone on the email list notifying them they've been added to a group
- * @param {*} emailList List of recipient emails
+ * @param {string} emailList List of recipient emails
+ * @param {string} eventNameRef Name of the event being created
+ * @param {string} startTimeRef Start time of event
+ * @param {string} maxAttendeeRef Max number of attendees
+ * @param {string} eventDetailsRef Details for the event
+ * 
  * @returns 
  */
-async function sendEmail(emailList) {
+ async function sendEmail(emailList, eventNameRef, startTimeRef, groupRef, eventDetailsRef) {
   var subject = "You are invited to event"
   const response = await fetch('/api/sendEmail', {
     method: 'POST',
-    body: JSON.stringify({ emails: emailList, subject }),
+    body: JSON.stringify({
+      emails: emailList, subject: subject, eventName: eventNameRef,
+      startTime: startTimeRef, group: groupRef, eventDetails: eventDetailsRef
+    }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -118,12 +126,19 @@ async function sendEmail(emailList) {
 /**
  * Generic page for a event, details are filled in by fetching group info from the database
  */
+var id = null;
 function SampleEventDetails() {
   const router = useRouter()
-  const { id } = router.query
-
+  if (router.query) {
+    id = router.query.eventId[0];
+  }
+  // Count will triger the update of the details
+  const [count, setCount] = useState(0);
   const [details, setDetails] = useState([]);
-  const [group, setGroup] = useState([]);
+  const [group, setGroup] = useState(-1);
+  const [eventName, setEventName] = useState('');
+  const [eventTime, setEventTime] = useState('');
+  const [eventDetails, setEventDetails] = useState('');
   const [guests, setGuests] = useState('');
   const [guestList, setGuestList] = useState([]);
   let guest = '';
@@ -135,7 +150,7 @@ function SampleEventDetails() {
   const [zoom, setZoom] = useState(9);
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [count]);
   const fetchProducts = async () => {
     fetchEvent(id)
       .then(event => {
@@ -149,7 +164,11 @@ function SampleEventDetails() {
             setDetails(EventDetails(info.event));
           });
         }
-        setGuestList(event[0].guestList)
+        setGroup(event[0].groupRef);
+        setEventName(event[0].eventNameRef);
+        setEventTime(event[0].startTimeRef);
+        setEventDetails(event[0].eventDetailsRef);
+        setGuestList(event[0].guestList);
         setLat(event[0].location[0]);
         setLng(event[0].location[1]);
       })
@@ -174,9 +193,10 @@ function SampleEventDetails() {
    */
   async function submitHandler(event) {
     event.preventDefault();
-    await sendEmail([guests]);
+    await sendEmail([guests], eventName, eventTime, group, eventDetails);
     await updateEvent(id, guests);
     setGuests('');
+    setCount((c) => c + 1);
   }
 
 
